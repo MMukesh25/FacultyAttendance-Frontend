@@ -1,0 +1,590 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.apply-leave-page {
+    min-height: 100vh;
+    padding: 30px;
+    background: #f5f1e8;
+    color: #18251d;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.apply-leave-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+
+.leave-back-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 12px 18px;
+
+    border: 2px solid #b89b52;
+    border-radius: 10px;
+
+    background: #18251d;
+    color: #f4df9b;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+
+.leave-back-button:hover {
+    background: #b89b52;
+    color: #18251d;
+    transform: translateY(-2px);
+}
+
+
+.leave-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+
+.leave-title > svg {
+    font-size: 38px;
+    color: #b89b52;
+}
+
+
+.leave-title h1 {
+    margin: 0;
+    font-size: 30px;
+    color: #18251d;
+}
+
+
+.leave-title p {
+    margin: 5px 0 0;
+    color: #667067;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.apply-leave-content {
+    width: min(1100px, 100%);
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.leave-profile-card {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    padding: 22px;
+
+    margin-bottom: 25px;
+
+    background: #ffffff;
+
+    border: 2px solid #d3bd7b;
+    border-radius: 16px;
+
+    box-shadow: 0 8px 25px rgba(24, 37, 29, 0.08);
+}
+
+
+.leave-profile-card div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+
+.leave-profile-card span {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #777;
+}
+
+
+.leave-profile-card strong {
+    font-size: 16px;
+    color: #18251d;
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.leave-success,
+.leave-error {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 15px 18px;
+
+    margin-bottom: 20px;
+
+    border-radius: 10px;
+
+    font-weight: 600;
+}
+
+
+.leave-success {
+    background: #e8f5e9;
+    border: 1px solid #8fbd95;
+    color: #245b2b;
+}
+
+
+.leave-error {
+    background: #fcebea;
+    border: 1px solid #d79a96;
+    color: #8b2924;
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.leave-form-card,
+.my-leaves-card {
+    background: #ffffff;
+
+    border: 2px solid #d3bd7b;
+    border-radius: 18px;
+
+    padding: 28px;
+
+    margin-bottom: 25px;
+
+    box-shadow: 0 10px 30px rgba(24, 37, 29, 0.08);
+}
+
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.leave-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    margin-bottom: 25px;
+}
+
+
+.leave-heading-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #18251d;
+    color: #f4df9b;
+
+    font-size: 20px;
+}
+
+
+.leave-section-heading h2 {
+    margin: 0;
+
+    color: #18251d;
+
+    font-size: 22px;
+}
+
+
+.leave-section-heading p {
+    margin: 5px 0 0;
+
+    color: #707870;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.leave-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+
+.leave-date-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+
+.leave-field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+
+.leave-field label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #26352c;
+
+    font-weight: 700;
+    font-size: 14px;
+}
+
+
+.leave-field label svg {
+    color: #b08d36;
+}
+
+
+.leave-field input,
+.leave-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    border: 1px solid #cfcfcf;
+    border-radius: 10px;
+
+    padding: 13px 14px;
+
+    background: #fafafa;
+
+    color: #18251d;
+
+    font-family: inherit;
+    font-size: 15px;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+
+.leave-field input:focus,
+.leave-field textarea:focus {
+    border-color: #b89b52;
+
+    box-shadow:
+        0 0 0 3px rgba(184, 155, 82, 0.15);
+
+    background: #ffffff;
+}
+
+
+.leave-field textarea {
+    resize: vertical;
+    min-height: 140px;
+}
+
+
+.leave-field small {
+    text-align: right;
+
+    color: #777;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+========================================================= */
+
+.submit-leave-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 14px 20px;
+
+    border: 2px solid #b89b52;
+    border-radius: 10px;
+
+    background: #18251d;
+    color: #f4df9b;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+
+.submit-leave-button:hover:not(:disabled) {
+    background: #b89b52;
+    color: #18251d;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(24, 37, 29, 0.18);
+}
+
+
+.submit-leave-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.leave-loading {
+    padding: 35px;
+
+    text-align: center;
+
+    color: #6d746d;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.no-leaves {
+    padding: 40px 20px;
+
+    text-align: center;
+
+    color: #777;
+}
+
+
+.no-leaves svg {
+    font-size: 40px;
+    color: #b89b52;
+}
+
+
+.no-leaves h3 {
+    margin: 12px 0 5px;
+
+    color: #26352c;
+}
+
+
+.no-leaves p {
+    margin: 0;
+}
+
+
+/* =========================================================
+   REQUEST LIST
+========================================================= */
+
+.leave-request-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+
+.leave-request-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 20px;
+
+    border: 1px solid #ded7c5;
+    border-radius: 12px;
+
+    background: #faf9f5;
+}
+
+
+.leave-request-main {
+    flex: 1;
+}
+
+
+.leave-request-dates {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #18251d;
+}
+
+
+.leave-request-dates svg {
+    color: #b08d36;
+}
+
+
+.leave-request-reason {
+    margin: 10px 0 0;
+
+    color: #5f665f;
+
+    line-height: 1.5;
+}
+
+
+.admin-message {
+    margin: 10px 0 0;
+
+    padding: 10px 12px;
+
+    border-left: 3px solid #b89b52;
+
+    background: #f3eedf;
+
+    color: #4e554e;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.leave-status {
+    min-width: 115px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 9px 13px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+
+.leave-status-pending {
+    background: #fff3cd;
+    color: #806500;
+    border: 1px solid #e2c766;
+}
+
+
+.leave-status-approved {
+    background: #e8f5e9;
+    color: #27632d;
+    border: 1px solid #91c097;
+}
+
+
+.leave-status-rejected {
+    background: #fcebea;
+    color: #8b2924;
+    border: 1px solid #d79a96;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .apply-leave-page {
+        padding: 20px;
+    }
+
+
+    .apply-leave-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+
+    .leave-profile-card {
+        grid-template-columns: 1fr;
+    }
+
+
+    .leave-date-row {
+        grid-template-columns: 1fr;
+    }
+
+
+    .leave-request-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    .leave-status {
+        width: fit-content;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .apply-leave-page {
+        padding: 14px;
+    }
+
+
+    .leave-form-card,
+    .my-leaves-card {
+        padding: 20px;
+    }
+
+
+    .leave-title h1 {
+        font-size: 24px;
+    }
+
+
+    .leave-back-button span {
+        display: none;
+    }
+
+}
+

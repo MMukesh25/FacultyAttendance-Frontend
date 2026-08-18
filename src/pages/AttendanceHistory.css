@@ -1,0 +1,790 @@
+
+/* =========================================================
+   SVPCET ATTENDANCE HISTORY
+   College Logo Based Theme
+   Colors:
+   Navy Blue + Deep Red + Green + White + Gold
+========================================================= */
+
+.attendance-history-page {
+
+    min-height: 100vh;
+
+    padding: 35px 55px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5f7fa,
+            #ffffff,
+            #eef3f8
+        );
+
+    color: #17233c;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.history-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 35px;
+
+}
+
+
+.back-button {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 11px 20px;
+
+    border: 2px solid #13294b;
+
+    border-radius: 10px;
+
+    background: white;
+
+    color: #13294b;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+
+.back-button:hover {
+
+    background: #13294b;
+
+    color: white;
+
+    transform: translateY(-2px);
+
+}
+
+
+.history-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+}
+
+
+.history-title > svg {
+
+    font-size: 38px;
+
+    color: #b5121b;
+
+}
+
+
+.history-title h1 {
+
+    margin: 0;
+
+    color: #13294b;
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+}
+
+
+.history-title p {
+
+    margin: 5px 0 0;
+
+    color: #667085;
+
+}
+
+
+/* =========================================================
+   MONTH HEADER
+========================================================= */
+
+.month-header {
+
+    text-align: center;
+
+    margin-bottom: 22px;
+
+}
+
+
+.month-header h2 {
+
+    margin: 0;
+
+    color: #13294b;
+
+    font-size: 28px;
+
+    font-weight: 800;
+
+}
+
+
+.month-header p {
+
+    margin-top: 6px;
+
+    color: #667085;
+
+}
+
+
+/* =========================================================
+   LEGEND
+========================================================= */
+
+.attendance-legend {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 35px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.legend-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #344054;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.legend-circle {
+
+    width: 32px;
+
+    height: 32px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-weight: 800;
+
+    color: white;
+
+}
+
+
+/* PRESENT */
+
+.present-color {
+
+    background: #159447;
+
+}
+
+
+/* ABSENT */
+
+.absent-color {
+
+    background: #c1121f;
+
+}
+
+
+/* HOLIDAY */
+
+.holiday-color {
+
+    background: #d39b18;
+
+}
+
+
+/* =========================================================
+   CALENDAR CARD
+========================================================= */
+
+.calendar-card {
+
+    max-width: 1050px;
+
+    margin: auto;
+
+    padding: 28px;
+
+    border: 2px solid #d5dbe5;
+
+    border-top: 5px solid #13294b;
+
+    border-radius: 22px;
+
+    background: white;
+
+    box-shadow:
+        0 15px 40px rgba(19, 41, 75, 0.12);
+
+}
+
+
+/* =========================================================
+   WEEK DAYS
+========================================================= */
+
+.weekday-row {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 12px;
+
+    margin-bottom: 14px;
+
+}
+
+
+.weekday-row span {
+
+    text-align: center;
+
+    padding: 10px;
+
+    color: #13294b;
+
+    font-weight: 800;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   CALENDAR GRID
+========================================================= */
+
+.calendar-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 14px;
+
+}
+
+
+/* =========================================================
+   CALENDAR DAY
+========================================================= */
+
+.calendar-day {
+
+    min-height: 95px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 1px solid #dce2ea;
+
+    border-radius: 16px;
+
+    background: #f9fafb;
+
+    transition: 0.25s;
+
+}
+
+
+.calendar-day:hover {
+
+    transform: translateY(-3px);
+
+    border-color: #13294b;
+
+    box-shadow:
+        0 6px 18px rgba(19, 41, 75, 0.12);
+
+}
+
+
+/* =========================================================
+   DATE NUMBER
+========================================================= */
+
+.date-number {
+
+    width: 45px;
+
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e9edf3;
+
+    color: #13294b;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+   PRESENT
+========================================================= */
+
+.calendar-day.present {
+
+    border-color: #159447;
+
+    background: #f3fbf6;
+
+}
+
+
+.calendar-day.present
+.date-number {
+
+    background: #159447;
+
+    color: white;
+
+}
+
+
+.calendar-day.present
+.day-icon {
+
+    color: #159447;
+
+}
+
+
+/* =========================================================
+   ABSENT
+========================================================= */
+
+.calendar-day.absent {
+
+    border-color: #c1121f;
+
+    background: #fff5f5;
+
+}
+
+
+.calendar-day.absent
+.date-number {
+
+    background: #c1121f;
+
+    color: white;
+
+}
+
+
+.calendar-day.absent
+.day-icon {
+
+    color: #c1121f;
+
+}
+
+
+/* =========================================================
+   HOLIDAY
+========================================================= */
+
+.calendar-day.holiday {
+
+    border-color: #d39b18;
+
+    background: #fffaf0;
+
+}
+
+
+.calendar-day.holiday
+.date-number {
+
+    background: #d39b18;
+
+    color: white;
+
+}
+
+
+.calendar-day.holiday
+.day-icon {
+
+    color: #d39b18;
+
+}
+
+
+/* =========================================================
+   TODAY
+========================================================= */
+
+.calendar-day.today {
+
+    box-shadow:
+        0 0 0 3px #13294b;
+
+}
+
+
+/* =========================================================
+   EMPTY DAYS
+========================================================= */
+
+.empty-day {
+
+    border: none;
+
+    background: transparent;
+
+    box-shadow: none;
+
+}
+
+
+.empty-day:hover {
+
+    transform: none;
+
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.day-icon {
+
+    font-size: 15px;
+
+}
+
+
+/* =========================================================
+   LOADING / ERROR
+========================================================= */
+
+.history-loading,
+.history-error {
+
+    padding: 45px;
+
+    text-align: center;
+
+    color: #13294b;
+
+    font-weight: 600;
+
+}
+
+
+.history-error {
+
+    color: #c1121f;
+
+}
+
+
+/* =========================================================
+   MONTHLY RECORDS
+========================================================= */
+
+.monthly-records {
+
+    max-width: 1050px;
+
+    margin: 30px auto 0;
+
+    padding: 25px;
+
+    border: 1px solid #d5dbe5;
+
+    border-top: 4px solid #b5121b;
+
+    border-radius: 20px;
+
+    background: white;
+
+    box-shadow:
+        0 10px 30px rgba(19, 41, 75, 0.08);
+
+}
+
+
+/* =========================================================
+   RECORD HEADING
+========================================================= */
+
+.records-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+
+}
+
+
+.records-heading h2 {
+
+    margin: 0;
+
+    color: #13294b;
+
+    font-weight: 800;
+
+}
+
+
+.records-heading span {
+
+    color: #667085;
+
+}
+
+
+/* =========================================================
+   ATTENDANCE RECORD
+========================================================= */
+
+.attendance-record {
+
+    display: grid;
+
+    grid-template-columns:
+        1.5fr
+        1fr
+        1fr
+        1fr;
+
+    gap: 20px;
+
+    align-items: center;
+
+    padding: 16px;
+
+    margin-bottom: 10px;
+
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    border-left: 5px solid #13294b;
+
+    transition: 0.25s;
+
+}
+
+
+.attendance-record:hover {
+
+    background: #f1f5f9;
+
+    transform: translateX(3px);
+
+}
+
+
+.attendance-record div {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+.attendance-record small {
+
+    color: #667085;
+
+}
+
+
+.attendance-record strong {
+
+    color: #17233c;
+
+}
+
+
+.attendance-record > div:first-child
+span {
+
+    color: #159447;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .attendance-history-page {
+
+        padding: 25px 15px;
+
+    }
+
+
+    .history-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 20px;
+
+    }
+
+
+    .history-title h1 {
+
+        font-size: 24px;
+
+    }
+
+
+    .calendar-card {
+
+        padding: 12px;
+
+    }
+
+
+    .calendar-grid {
+
+        gap: 6px;
+
+    }
+
+
+    .weekday-row {
+
+        gap: 6px;
+
+    }
+
+
+    .calendar-day {
+
+        min-height: 65px;
+
+        border-radius: 12px;
+
+    }
+
+
+    .date-number {
+
+        width: 34px;
+
+        height: 34px;
+
+        font-size: 14px;
+
+    }
+
+
+    .day-icon {
+
+        font-size: 11px;
+
+    }
+
+
+    .attendance-legend {
+
+        gap: 15px;
+
+        flex-wrap: wrap;
+
+    }
+
+
+    .attendance-record {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+}
+

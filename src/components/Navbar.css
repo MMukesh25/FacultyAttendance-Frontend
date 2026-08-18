@@ -1,0 +1,343 @@
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.navbar {
+
+    width: 100%;
+    height: 92px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 8px 42px;
+
+    background-color: var(--white);
+
+    border-bottom: 3px solid var(--college-gold);
+
+    box-shadow: var(--shadow-sm);
+
+    position: relative;
+    z-index: 1000;
+
+}
+
+
+/* =========================================================
+   COLLEGE BRANDING
+   ========================================================= */
+
+.navbar-brand {
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.logo-container {
+
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background-color: var(--white);
+
+    border: 2px solid var(--college-red);
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+
+}
+
+
+.college-logo {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+}
+
+
+/* =========================================================
+   COLLEGE NAME
+   ========================================================= */
+
+.college-details {
+
+    display: flex;
+    flex-direction: column;
+
+    line-height: 1.1;
+
+}
+
+
+.college-details h1 {
+
+    margin: 0;
+
+    font-size: 19px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.8px;
+
+    color: var(--primary-navy);
+
+}
+
+
+.college-details h2 {
+
+    margin: 4px 0;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.45px;
+
+    color: var(--college-red);
+
+}
+
+
+.college-details span {
+
+    margin-top: 2px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: var(--college-gold);
+
+}
+
+
+/* =========================================================
+   NAVBAR ACTIONS
+   ========================================================= */
+
+.navbar-actions {
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+/* =========================================================
+   ICON BUTTON
+   ========================================================= */
+
+.nav-icon {
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background-color: transparent;
+
+    color: var(--primary-navy);
+
+    font-size: 20px;
+
+    transition: var(--transition);
+
+}
+
+
+.nav-icon:hover {
+
+    color: var(--college-red);
+
+    background-color: #f8f1f1;
+
+    transform: translateY(-2px);
+
+}
+
+
+/* =========================================================
+   NOTIFICATION
+   ========================================================= */
+
+.notification-icon {
+
+    position: relative;
+
+}
+
+
+.notification-badge {
+
+    position: absolute;
+
+    top: 1px;
+    right: 0px;
+
+    min-width: 16px;
+    height: 16px;
+
+    padding: 0 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background-color: var(--college-red);
+
+    color: var(--white);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .navbar {
+
+        height: 80px;
+
+        padding: 7px 18px;
+
+    }
+
+
+    .logo-container {
+
+        width: 60px;
+        height: 60px;
+
+    }
+
+
+    .college-details h1 {
+
+        font-size: 15px;
+
+    }
+
+
+    .college-details h2 {
+
+        font-size: 10px;
+
+    }
+
+
+    .college-details span {
+
+        font-size: 9px;
+
+    }
+
+
+    .navbar-actions {
+
+        gap: 4px;
+
+    }
+
+
+    .nav-icon {
+
+        width: 36px;
+        height: 36px;
+
+        font-size: 17px;
+
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .navbar {
+
+        padding: 7px 12px;
+
+    }
+
+
+    .logo-container {
+
+        width: 50px;
+        height: 50px;
+
+    }
+
+
+    .college-details h1 {
+
+        font-size: 12px;
+
+        letter-spacing: 0.3px;
+
+    }
+
+
+    .college-details h2 {
+
+        font-size: 8px;
+
+    }
+
+
+    .college-details span {
+
+        font-size: 7px;
+
+        letter-spacing: 1px;
+
+    }
+
+
+    .navbar-actions {
+
+        display: none;
+
+    }
+
+}

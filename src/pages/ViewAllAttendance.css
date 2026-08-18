@@ -1,0 +1,401 @@
+/* =========================================================
+   VIEW ALL PAGE
+   ========================================================= */
+
+.view-all-page {
+
+    min-height: 100vh;
+
+    padding: 35px 6%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #06152f,
+            #092653,
+            #06152f
+        );
+
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.view-all-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.back-button {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 12px 18px;
+
+    background: #0b2d5c;
+
+    color: #ffffff;
+
+    border: 2px solid #d2ad35;
+
+    border-radius: 10px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 0 #030b18;
+
+    transition: 0.2s ease;
+
+}
+
+
+.back-button:hover {
+
+    background: #b5121b;
+
+    transform: translateY(-2px);
+
+}
+
+
+.view-all-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+
+.view-all-title > svg {
+
+    font-size: 40px;
+
+    color: #d2ad35;
+
+}
+
+
+.view-all-title h1 {
+
+    margin: 0;
+
+    font-size: 30px;
+
+}
+
+
+.view-all-title p {
+
+    margin: 6px 0 0;
+
+    color: #dce5f2;
+
+}
+
+
+/* =========================================================
+   HISTORY CONTAINER
+   ========================================================= */
+
+.history-container {
+
+    max-width: 1150px;
+
+    margin: auto;
+
+}
+
+
+/* =========================================================
+   MONTH CARD
+   ========================================================= */
+
+.month-history-card {
+
+    margin-bottom: 30px;
+
+    background: #ffffff;
+
+    border: 3px solid #b5121b;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 7px 0 #030b18,
+        0 15px 30px rgba(0, 0, 0, 0.3);
+
+}
+
+
+/* =========================================================
+   MONTH HEADER
+   ========================================================= */
+
+.month-history-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 18px 25px;
+
+    background: #0b2d5c;
+
+    border-bottom: 3px solid #d2ad35;
+
+}
+
+
+.month-history-header > div {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.month-history-header svg {
+
+    color: #d2ad35;
+
+    font-size: 22px;
+
+}
+
+
+.month-history-header h2 {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 21px;
+
+}
+
+
+.month-history-header span {
+
+    padding: 7px 14px;
+
+    background: #d2ad35;
+
+    color: #071b3a;
+
+    border-radius: 50px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.attendance-table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+
+.attendance-table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    color: #071b3a;
+
+}
+
+
+.attendance-table th {
+
+    padding: 15px;
+
+    background: #f1f4f8;
+
+    border-bottom: 2px solid #d8dee7;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+
+}
+
+
+.attendance-table td {
+
+    padding: 15px;
+
+    border-bottom: 1px solid #e1e6ed;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.attendance-table tbody tr:hover {
+
+    background: #fffbea;
+
+}
+
+
+.attendance-table tbody tr:last-child td {
+
+    border-bottom: none;
+
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.attendance-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 7px 12px;
+
+    border-radius: 50px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+.status-present {
+
+    background: #d9f2df;
+
+    color: #16833b;
+
+}
+
+
+.status-absent {
+
+    background: #f9d9dc;
+
+    color: #b5121b;
+
+}
+
+
+.status-holiday {
+
+    background: #fff0b8;
+
+    color: #806500;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 750px) {
+
+    .view-all-page {
+
+        padding: 20px 4%;
+
+    }
+
+
+    .view-all-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .view-all-title h1 {
+
+        font-size: 23px;
+
+    }
+
+
+    .month-history-header {
+
+        padding: 15px;
+
+    }
+
+
+    .month-history-header h2 {
+
+        font-size: 18px;
+
+    }
+
+
+    .attendance-table th,
+    .attendance-table td {
+
+        padding: 11px;
+
+        white-space: nowrap;
+
+    }
+
+}
+

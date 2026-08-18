@@ -1,0 +1,748 @@
+/* =========================================================
+   FACULTY DASHBOARD
+   SVPCET THEME
+   Navy Blue + Red + Green + White + Gold
+   ========================================================= */
+
+
+.faculty-dashboard {
+
+    min-height: 100vh;
+
+    padding: 35px 6%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #06152f 0%,
+            #092653 50%,
+            #06152f 100%
+        );
+
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.faculty-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px 25px;
+
+    margin-bottom: 30px;
+
+    background: #0b2d5c;
+
+    border: 2px solid #d2ad35;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 7px 0 #030b18,
+        0 15px 30px rgba(0, 0, 0, 0.35);
+
+}
+
+
+.faculty-welcome {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+
+.faculty-profile-icon {
+
+    font-size: 55px;
+
+    color: #ffffff;
+
+}
+
+
+.welcome-label {
+
+    margin: 0;
+
+    color: #d2ad35;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+}
+
+
+.faculty-welcome h1 {
+
+    margin: 4px 0 0;
+
+    color: #ffffff;
+
+    font-size: 30px;
+
+}
+
+
+.logout-button {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 11px 20px;
+
+    border: 2px solid #a80f1a;
+
+    border-radius: 9px;
+
+    background: #b5121b;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 0 #680a10;
+
+    transition: 0.2s ease;
+
+}
+
+
+.logout-button:hover {
+
+    background: #8f0d15;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 0 #57080c;
+
+}
+
+
+/* =========================================================
+   FACULTY INFORMATION
+   ========================================================= */
+
+.faculty-profile-card {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+    padding: 25px;
+
+    margin-bottom: 32px;
+
+    background: #ffffff;
+
+    border: 3px solid #b5121b;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 7px 0 #030b18,
+        0 15px 30px rgba(0, 0, 0, 0.30);
+
+}
+
+
+.profile-item {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    padding: 10px 15px;
+
+    border-left: 4px solid #0b2d5c;
+
+}
+
+
+.profile-item span {
+
+    color: #b5121b;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+}
+
+
+.profile-item strong {
+
+    color: #071b3a;
+
+    font-size: 16px;
+
+}
+
+
+/* =========================================================
+   TODAY'S ATTENDANCE
+   ========================================================= */
+
+.attendance-section {
+
+    margin-bottom: 30px;
+
+}
+
+
+.section-heading {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+
+}
+
+
+.section-heading h2 {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 24px;
+
+}
+
+
+.section-heading p {
+
+    margin: 6px 0 0;
+
+    color: #dce5f2;
+
+    font-size: 14px;
+
+}
+
+
+.section-heading > svg {
+
+    color: #d2ad35;
+
+    font-size: 32px;
+
+}
+
+
+/* =========================================================
+   ATTENDANCE CARD
+   ========================================================= */
+
+.attendance-card {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr 1fr auto;
+
+    gap: 20px;
+
+    align-items: center;
+
+    padding: 28px;
+
+    background: #ffffff;
+
+    border: 3px solid #0b2d5c;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 7px 0 #030b18,
+        0 15px 30px rgba(0, 0, 0, 0.35);
+
+}
+
+
+.time-box {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    padding: 15px;
+
+    background: #f4f7fb;
+
+    border-radius: 10px;
+
+    border-left: 5px solid #0b2d5c;
+
+}
+
+
+.time-box span {
+
+    color: #b5121b;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+}
+
+
+.time-box strong {
+
+    color: #071b3a;
+
+    font-size: 24px;
+
+}
+
+
+.timer-box {
+
+    border-left-color: #16833b;
+
+}
+
+
+/* =========================================================
+   CLOCK BUTTON
+   ========================================================= */
+
+.attendance-action {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+}
+
+
+.clock-button {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    min-width: 145px;
+
+    padding: 14px 22px;
+
+    border: 2px solid #8c0d15;
+
+    border-radius: 10px;
+
+    background: #b5121b;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 0 #680a10;
+
+    transition: 0.2s ease;
+
+}
+
+
+.clock-button:hover {
+
+    background: #16833b;
+
+    border-color: #10612c;
+
+    box-shadow:
+        0 5px 0 #0b4520;
+
+    transform: translateY(-2px);
+
+}
+
+
+/* =========================================================
+   DASHBOARD MODULES
+   LEFT  = ATTENDANCE HISTORY
+   RIGHT = VIEW ALL
+   BELOW = APPLY LEAVE
+   ========================================================= */
+
+.dashboard-modules {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 20px;
+
+}
+
+
+/* Apply Leave takes the complete row */
+
+.dashboard-module:nth-child(3) {
+
+    grid-column: 1 / -1;
+
+}
+
+
+.dashboard-module {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 24px;
+
+    background: #ffffff;
+
+    border: 3px solid #0b2d5c;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 6px 0 #030b18,
+        0 13px 25px rgba(0, 0, 0, 0.30);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.dashboard-module:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 9px 0 #030b18,
+        0 18px 30px rgba(0, 0, 0, 0.35);
+
+}
+
+
+/* =========================================================
+   MODULE ICON
+   ========================================================= */
+
+.module-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 60px;
+
+    height: 60px;
+
+    border-radius: 50%;
+
+    color: #ffffff;
+
+    font-size: 23px;
+
+    box-shadow:
+        0 4px 0 #030b18;
+
+}
+
+
+.calendar-icon {
+
+    background: #0b2d5c;
+
+    border: 3px solid #d2ad35;
+
+}
+
+
+.view-all-icon {
+
+    background: #16833b;
+
+    border: 3px solid #10612c;
+
+}
+
+
+.leave-icon {
+
+    background: #b5121b;
+
+    border: 3px solid #8c0d15;
+
+}
+
+
+/* =========================================================
+   MODULE CONTENT
+   ========================================================= */
+
+.module-content {
+
+    flex: 1;
+
+}
+
+
+.module-content h2 {
+
+    margin: 0 0 6px;
+
+    color: #071b3a;
+
+    font-size: 21px;
+
+}
+
+
+.module-content p {
+
+    margin: 0;
+
+    color: #596575;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   MODULE BUTTON
+   ========================================================= */
+
+.module-button {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    min-width: 155px;
+
+    padding: 12px 18px;
+
+    border: 2px solid #0b2d5c;
+
+    border-radius: 9px;
+
+    background: #0b2d5c;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 0 #030b18;
+
+    transition: 0.2s ease;
+
+}
+
+
+.module-button:hover {
+
+    background: #b5121b;
+
+    border-color: #8c0d15;
+
+    transform: translateY(-2px);
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 950px) {
+
+    .faculty-profile-card {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .attendance-card {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .attendance-action {
+
+        justify-content: flex-start;
+
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .dashboard-modules {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .dashboard-module:nth-child(3) {
+
+        grid-column: auto;
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .faculty-dashboard {
+
+        padding: 20px 4%;
+
+    }
+
+
+    .faculty-header {
+
+        align-items: flex-start;
+
+        gap: 15px;
+
+    }
+
+
+    .faculty-welcome h1 {
+
+        font-size: 23px;
+
+    }
+
+
+    .faculty-profile-card {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .attendance-card {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .attendance-action {
+
+        justify-content: stretch;
+
+    }
+
+
+    .clock-button {
+
+        width: 100%;
+
+    }
+
+
+    .dashboard-module {
+
+        flex-wrap: wrap;
+
+    }
+
+
+    .module-content {
+
+        min-width: 200px;
+
+    }
+
+
+    .module-button {
+
+        width: 100%;
+
+    }
+
+}
+
