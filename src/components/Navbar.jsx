@@ -1,9 +1,7 @@
 import "./Navbar.css";
 
 import {
-    FaBell,
-    FaHome,
-    FaUserCircle
+    FaUserCheck
 } from "react-icons/fa";
 
 import collegeLogo from "../assets/collegelogo.jpeg";
@@ -12,18 +10,25 @@ import collegeLogo from "../assets/collegelogo.jpeg";
 function Navbar() {
 
     return (
+
         <header className="navbar">
 
-            {/* College Branding */}
+            {/* =================================================
+                COLLEGE BRANDING
+            ================================================= */}
+
             <div className="navbar-brand">
 
                 <div className="logo-container">
+
                     <img
                         src={collegeLogo}
                         alt="Sri Venkatesa Perumal College Logo"
                         className="college-logo"
                     />
+
                 </div>
+
 
                 <div className="college-details">
 
@@ -44,38 +49,42 @@ function Navbar() {
             </div>
 
 
-            {/* Project Related Icons */}
+            {/* =================================================
+                FACULTY ATTENDANCE PROJECT ICON
+                Design only - no functionality/API changes
+            ================================================= */}
+
             <div className="navbar-actions">
 
-                <button
-                    className="nav-icon"
-                    title="Home"
+                <div
+                    className="attendance-project-icon"
+                    title="Faculty Attendance System"
+                    aria-label="Faculty Attendance System"
                 >
-                    <FaHome />
-                </button>
 
-                <button
-                    className="nav-icon notification-icon"
-                    title="Notifications"
-                >
-                    <FaBell />
+                    <div className="attendance-icon-card">
 
-                    <span className="notification-badge">
-                        0
-                    </span>
-                </button>
+                        <FaUserCheck />
 
-                <button
-                    className="nav-icon"
-                    title="Profile"
-                >
-                    <FaUserCircle />
-                </button>
+                        <span className="attendance-check">
+                            ✓
+                        </span>
+
+                    </div>
+
+                    <span className="attendance-icon-shadow"></span>
+
+                </div>
 
             </div>
 
+
         </header>
+
     );
+
 }
 
+
 export default Navbar;
+

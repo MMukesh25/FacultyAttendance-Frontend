@@ -102,14 +102,63 @@ function AdminDashboard() {
 
 
     // =========================================================
-    // LOAD ADMIN FROM LOCAL STORAGE
+    // DATE
+    // =========================================================
+
+    const todayDate = new Date();
+
+    const todayKey =
+        `${todayDate.getFullYear()}-` +
+        `${String(todayDate.getMonth() + 1).padStart(2, "0")}-` +
+        `${String(todayDate.getDate()).padStart(2, "0")}`;
+
+    const today =
+        todayDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        });
+
+
+    // =========================================================
+    // CURRENT MONTH
+    // =========================================================
+
+    const currentYear =
+        todayDate.getFullYear();
+
+    const currentMonth =
+        todayDate.getMonth();
+
+    const currentMonthName =
+        todayDate.toLocaleDateString("en-IN", {
+            month: "long",
+            year: "numeric"
+        });
+
+    const daysInCurrentMonth =
+        new Date(
+            currentYear,
+            currentMonth + 1,
+            0
+        ).getDate();
+
+    const firstDay =
+        new Date(
+            currentYear,
+            currentMonth,
+            1
+        ).getDay();
+
+
+    // =========================================================
+    // LOAD ADMIN
     // =========================================================
 
     useEffect(() => {
 
         const storedUser =
             localStorage.getItem("user");
-
 
         if (!storedUser) {
 
@@ -120,12 +169,10 @@ function AdminDashboard() {
             return;
         }
 
-
         try {
 
             const parsedUser =
                 JSON.parse(storedUser);
-
 
             if (!parsedUser?.id) {
 
@@ -138,7 +185,6 @@ function AdminDashboard() {
                 return;
             }
 
-
             if (
                 String(parsedUser.role).toUpperCase() !==
                 "ADMIN"
@@ -150,7 +196,6 @@ function AdminDashboard() {
 
                 return;
             }
-
 
             setUser(parsedUser);
 
@@ -186,18 +231,54 @@ function AdminDashboard() {
 
                 setFacultyError("");
 
-
                 const response =
                     await axios.get(
                         "http://localhost:8080/api/admin/faculty/today"
                     );
 
-
                 const data =
                     Array.isArray(response.data)
-                        ? response.data
+                        ? [...response.data]
                         : [];
 
+                data.sort((a, b) => {
+
+                    const clockInA =
+                        a.clockIn
+                            ? new Date(a.clockIn)
+                            : null;
+
+                    const clockInB =
+                        b.clockIn
+                            ? new Date(b.clockIn)
+                            : null;
+
+                    if (clockInA && !clockInB) {
+                        return -1;
+                    }
+
+                    if (!clockInA && clockInB) {
+                        return 1;
+                    }
+
+                    if (clockInA && clockInB) {
+
+                        return (
+                            clockInA.getTime() -
+                            clockInB.getTime()
+                        );
+
+                    }
+
+                    return String(
+                        a.fullName || ""
+                    ).localeCompare(
+                        String(
+                            b.fullName || ""
+                        )
+                    );
+
+                });
 
                 setFacultyList(data);
 
@@ -207,7 +288,6 @@ function AdminDashboard() {
                     "Faculty loading error:",
                     error
                 );
-
 
                 if (
                     error.response?.status === 403
@@ -234,7 +314,6 @@ function AdminDashboard() {
 
         };
 
-
         loadFaculty();
 
     }, []);
@@ -242,11 +321,10 @@ function AdminDashboard() {
 
     // =========================================================
     // LOAD PENDING LEAVE REQUESTS
-    // =========================================================
     //
-    // BACKEND:
+    // CORRECT BACKEND ENDPOINT:
+    //
     // GET /api/leaves/admin/pending
-    //
     // =========================================================
 
     const loadLeaveRequests = async () => {
@@ -257,24 +335,20 @@ function AdminDashboard() {
 
             setLeaveError("");
 
-
             const response =
                 await axios.get(
                     "http://localhost:8080/api/leaves/admin/pending"
                 );
-
 
             const data =
                 Array.isArray(response.data)
                     ? response.data
                     : [];
 
-
             console.log(
                 "Pending leave requests:",
                 data
             );
-
 
             setLeaveRequests(data);
 
@@ -285,21 +359,12 @@ function AdminDashboard() {
                 error
             );
 
-
             if (
                 error.response?.status === 403
             ) {
 
                 setLeaveError(
                     "You are not authorized to view leave requests."
-                );
-
-            } else if (
-                error.response?.status === 404
-            ) {
-
-                setLeaveError(
-                    "Leave request API was not found."
                 );
 
             } else {
@@ -321,50 +386,7 @@ function AdminDashboard() {
 
 
     // =========================================================
-    // LOAD PENDING LEAVE COUNT
-    // =========================================================
-
-    const loadLeaveCount = async () => {
-
-        try {
-
-            const response =
-                await axios.get(
-                    "http://localhost:8080/api/leaves/admin/count"
-                );
-
-
-            const count =
-                Number(
-                    response.data?.count || 0
-                );
-
-
-            /*
-             * We keep the actual pending list in state.
-             * The count endpoint is mainly useful when
-             * opening / refreshing the dashboard.
-             */
-
-            console.log(
-                "Pending leave count:",
-                count
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Leave count loading error:",
-                error
-            );
-
-        }
-
-    };
-
-
-    // =========================================================
-    // LOAD LEAVES WHEN ADMIN IS AVAILABLE
+    // LOAD LEAVE REQUESTS WHEN ADMIN IS READY
     // =========================================================
 
     useEffect(() => {
@@ -373,16 +395,13 @@ function AdminDashboard() {
             return;
         }
 
-
         loadLeaveRequests();
-
-        loadLeaveCount();
 
     }, [user]);
 
 
     // =========================================================
-    // OPEN LEAVE REQUEST MODAL
+    // OPEN LEAVE REQUESTS
     // =========================================================
 
     const handleLeaveAlert = async () => {
@@ -396,12 +415,13 @@ function AdminDashboard() {
 
     // =========================================================
     // APPROVE / REJECT LEAVE
-    // =========================================================
     //
-    // BACKEND:
+    // CORRECT BACKEND ENDPOINT:
+    //
     // PUT /api/leaves/admin/process/{id}
     //
-    // BODY:
+    // Request body:
+    //
     // {
     //     adminEmail: "...",
     //     status: "APPROVED",
@@ -415,20 +435,9 @@ function AdminDashboard() {
         action
     ) => {
 
-        if (!leaveId) {
+        if (!leaveId || !user?.email) {
             return;
         }
-
-
-        if (!user?.email) {
-
-            setLeaveError(
-                "Admin email is not available."
-            );
-
-            return;
-        }
-
 
         try {
 
@@ -436,31 +445,22 @@ function AdminDashboard() {
 
             setLeaveError("");
 
+            const adminMessage =
+                action === "APPROVED"
+                    ? "Leave approved by admin."
+                    : "Leave rejected by admin.";
 
-            const response =
-                await axios.put(
-                    `http://localhost:8080/api/leaves/admin/process/${leaveId}`,
-                    {
-                        adminEmail: user.email,
-
-                        status: action,
-
-                        adminMessage:
-                            action === "APPROVED"
-                                ? "Leave approved."
-                                : "Leave rejected."
-                    }
-                );
-
-
-            console.log(
-                "Leave action response:",
-                response.data
+            await axios.put(
+                `http://localhost:8080/api/leaves/admin/process/${leaveId}`,
+                {
+                    adminEmail: user.email,
+                    status: action,
+                    adminMessage: adminMessage
+                }
             );
 
-
             // Remove processed request
-            // from pending list
+            // from pending list.
 
             setLeaveRequests(
                 previousRequests =>
@@ -470,7 +470,6 @@ function AdminDashboard() {
                     )
             );
 
-
         } catch (error) {
 
             console.error(
@@ -478,14 +477,13 @@ function AdminDashboard() {
                 error
             );
 
-
             setLeaveError(
                 error.response?.data?.message ||
-                `Unable to ${
+                (
                     action === "APPROVED"
-                        ? "approve"
-                        : "reject"
-                } leave request.`
+                        ? "Unable to approve leave request."
+                        : "Unable to reject leave request."
+                )
             );
 
         } finally {
@@ -510,33 +508,6 @@ function AdminDashboard() {
         });
 
     };
-
-
-    // =========================================================
-    // DATE
-    // =========================================================
-
-    const todayDate =
-        new Date();
-
-
-    const todayKey =
-        `${todayDate.getFullYear()}-${String(
-            todayDate.getMonth() + 1
-        ).padStart(2, "0")}-${String(
-            todayDate.getDate()
-        ).padStart(2, "0")}`;
-
-
-    const today =
-        todayDate.toLocaleDateString(
-            "en-IN",
-            {
-                day: "2-digit",
-                month: "long",
-                year: "numeric"
-            }
-        );
 
 
     // =========================================================
@@ -584,29 +555,22 @@ function AdminDashboard() {
     // FORMAT TIME
     // =========================================================
 
-    const formatTime = (
-        dateTime
-    ) => {
+    const formatTime = (dateTime) => {
 
         if (!dateTime) {
             return "--";
         }
 
-
         const date =
             new Date(dateTime);
-
 
         if (
             Number.isNaN(
                 date.getTime()
             )
         ) {
-
             return "--";
-
         }
-
 
         return date.toLocaleTimeString(
             "en-IN",
@@ -624,20 +588,15 @@ function AdminDashboard() {
     // FORMAT DATE
     // =========================================================
 
-    const formatDate = (
-        dateValue
-    ) => {
+    const formatDate = (dateValue) => {
 
         if (!dateValue) {
             return "--";
         }
 
-
         if (
             typeof dateValue === "string" &&
-            /^\d{4}-\d{2}-\d{2}$/.test(
-                dateValue
-            )
+            /^\d{4}-\d{2}-\d{2}$/.test(dateValue)
         ) {
 
             const [
@@ -646,15 +605,12 @@ function AdminDashboard() {
                 day
             ] = dateValue.split("-");
 
-
             return `${day}/${month}/${year}`;
 
         }
 
-
         const date =
             new Date(dateValue);
-
 
         if (
             Number.isNaN(
@@ -662,13 +618,61 @@ function AdminDashboard() {
             )
         ) {
 
-            return String(dateValue);
+            return String(
+                dateValue
+            );
 
         }
 
-
         return date.toLocaleDateString(
             "en-IN"
+        );
+
+    };
+
+
+    // =========================================================
+    // FORMAT WORKING DURATION
+    // =========================================================
+
+    const formatWorkingDuration = (
+        minutes
+    ) => {
+
+        if (
+            minutes === null ||
+            minutes === undefined ||
+            minutes === ""
+        ) {
+
+            return "--";
+
+        }
+
+        const totalMinutes =
+            Number(minutes);
+
+        if (
+            Number.isNaN(
+                totalMinutes
+            )
+        ) {
+
+            return "--";
+
+        }
+
+        const hours =
+            Math.floor(
+                totalMinutes / 60
+            );
+
+        const remainingMinutes =
+            totalMinutes % 60;
+
+        return (
+            `${String(hours).padStart(2, "0")}h ` +
+            `${String(remainingMinutes).padStart(2, "0")}m`
         );
 
     };
@@ -681,26 +685,23 @@ function AdminDashboard() {
     const totalFaculty =
         facultyList.length;
 
-
     const activeFaculty =
         facultyList.filter(
             faculty =>
                 String(
-                    faculty.accountStatus || ""
+                    faculty.accountStatus
                 ).toUpperCase() ===
                 "ACTIVE"
         ).length;
-
 
     const disabledFaculty =
         facultyList.filter(
             faculty =>
                 String(
-                    faculty.accountStatus || ""
+                    faculty.accountStatus
                 ).toUpperCase() ===
                 "DISABLED"
         ).length;
-
 
     const presentToday =
         facultyList.filter(
@@ -712,136 +713,18 @@ function AdminDashboard() {
 
 
     // =========================================================
-    // LOAD FACULTY ATTENDANCE
+    // DATE HELPERS
     // =========================================================
 
-    const loadFacultyAttendance = async (
-        facultyId
-    ) => {
-
-        try {
-
-            setLoadingAttendance(true);
-
-            setAttendanceError("");
-
-
-            const now =
-                new Date();
-
-
-            const year =
-                now.getFullYear();
-
-
-            const month =
-                now.getMonth() + 1;
-
-
-            const response =
-                await axios.get(
-                    `http://localhost:8080/api/admin/faculty/${facultyId}/attendance`,
-                    {
-                        params: {
-                            year,
-                            month
-                        }
-                    }
-                );
-
-
-            const data =
-                Array.isArray(response.data)
-                    ? response.data
-                    : [];
-
-
-            setFacultyAttendance(data);
-
-        } catch (error) {
-
-            console.error(
-                "Faculty attendance loading error:",
-                error
-            );
-
-
-            if (
-                error.response?.status === 404
-            ) {
-
-                setAttendanceError(
-                    "Faculty attendance history was not found."
-                );
-
-            } else if (
-                error.response?.status === 400
-            ) {
-
-                setAttendanceError(
-                    "Invalid attendance year or month."
-                );
-
-            } else {
-
-                setAttendanceError(
-                    error.response?.data?.message ||
-                    "Unable to load faculty attendance history."
-                );
-
-            }
-
-        } finally {
-
-            setLoadingAttendance(false);
-
-        }
-
-    };
-
-
-    // =========================================================
-    // OPEN FACULTY DETAILS
-    // =========================================================
-
-    const handleFacultyView = async (
-        faculty
-    ) => {
-
-        setSelectedFaculty(faculty);
-
-        setShowAllHistory(false);
-
-        setFacultyAttendance([]);
-
-        setAttendanceError("");
-
-
-        await loadFacultyAttendance(
-            faculty.id
-        );
-
-    };
-
-
-    // =========================================================
-    // NORMALIZE DATE
-    // =========================================================
-
-    const getDateKey = (
-        value
-    ) => {
+    const getDateKey = (value) => {
 
         if (!value) {
             return null;
         }
 
-
         if (
             typeof value === "string" &&
-            /^\d{4}-\d{2}-\d{2}/.test(
-                value
-            )
+            /^\d{4}-\d{2}-\d{2}/.test(value)
         ) {
 
             return value.substring(
@@ -851,10 +734,8 @@ function AdminDashboard() {
 
         }
 
-
         const date =
             new Date(value);
-
 
         if (
             Number.isNaN(
@@ -865,7 +746,6 @@ function AdminDashboard() {
             return null;
 
         }
-
 
         return (
             `${date.getFullYear()}-` +
@@ -884,104 +764,307 @@ function AdminDashboard() {
     // GET ATTENDANCE DATE
     // =========================================================
 
-    const getAttendanceDate = (
-        record
-    ) => {
+    const getAttendanceDate =
+        (record) => {
 
-        return (
-            record?.attendanceDate ||
-            record?.date ||
-            record?.attendance_date ||
-            record?.day ||
-            null
-        );
+            return (
+                record?.attendanceDate ||
+                record?.date ||
+                record?.attendance_date ||
+                record?.day ||
+                null
+            );
 
-    };
+        };
+
+
+    // =========================================================
+    // GET CLOCK IN
+    // =========================================================
+
+    const getClockIn =
+        (record) => {
+
+            return (
+                record?.clockIn ||
+                record?.clock_in ||
+                null
+            );
+
+        };
+
+
+    // =========================================================
+    // GET CLOCK OUT
+    // =========================================================
+
+    const getClockOut =
+        (record) => {
+
+            return (
+                record?.clockOut ||
+                record?.clock_out ||
+                null
+            );
+
+        };
+
+
+    // =========================================================
+    // GET WORKING MINUTES
+    // =========================================================
+
+    const getWorkingMinutes =
+        (record) => {
+
+            return (
+                record?.workingMinutes ??
+                record?.working_minutes ??
+                null
+            );
+
+        };
 
 
     // =========================================================
     // CHECK PRESENT
     // =========================================================
 
-    const isAttendancePresent = (
-        record
-    ) => {
+    const isAttendancePresent =
+        (record) => {
 
-        if (!record) {
-            return false;
-        }
-
-
-        const status =
-            String(
-                record.attendanceStatus ||
-                record.status ||
-                ""
-            ).toUpperCase();
-
-
-        if (
-            status === "PRESENT" ||
-            status === "COMPLETED"
-        ) {
-
-            return true;
-
-        }
-
-
-        return Boolean(
-            record.clockIn ||
-            record.clock_in
-        );
-
-    };
-
-
-    // =========================================================
-    // CURRENT MONTH
-    // =========================================================
-
-    const currentYear =
-        todayDate.getFullYear();
-
-
-    const currentMonth =
-        todayDate.getMonth();
-
-
-    const currentMonthName =
-        todayDate.toLocaleDateString(
-            "en-IN",
-            {
-                month: "long",
-                year: "numeric"
+            if (!record) {
+                return false;
             }
-        );
 
+            const status =
+                String(
+                    record.attendanceStatus ||
+                    record.status ||
+                    ""
+                ).toUpperCase();
 
-    const daysInCurrentMonth =
-        new Date(
-            currentYear,
-            currentMonth + 1,
-            0
-        ).getDate();
+            if (
+                status === "PRESENT" ||
+                status === "APPROVED" ||
+                status === "COMPLETED"
+            ) {
 
+                return true;
 
-    const firstDay =
-        new Date(
-            currentYear,
-            currentMonth,
-            1
-        ).getDay();
+            }
+
+            return Boolean(
+                getClockIn(record)
+            );
+
+        };
 
 
     // =========================================================
-    // CALENDAR DAYS
+    // CHECK SUNDAY
+    // =========================================================
+
+    const isSundayDate =
+        (dateKey) => {
+
+            if (!dateKey) {
+                return false;
+            }
+
+            const date =
+                new Date(
+                    `${dateKey}T00:00:00`
+                );
+
+            return (
+                date.getDay() === 0
+            );
+
+        };
+
+
+    // =========================================================
+    // LOAD COMPLETE FACULTY ATTENDANCE
+    // =========================================================
+
+    const loadFacultyAttendance =
+        async (facultyId) => {
+
+            try {
+
+                setLoadingAttendance(true);
+
+                setAttendanceError("");
+
+                const response =
+                    await axios.get(
+                        `http://localhost:8080/api/admin/faculty/${facultyId}/attendance`
+                    );
+
+                let data = [];
+
+                if (
+                    Array.isArray(
+                        response.data
+                    )
+                ) {
+
+                    data =
+                        [
+                            ...response.data
+                        ];
+
+                } else if (
+                    Array.isArray(
+                        response.data?.attendanceHistory
+                    )
+                ) {
+
+                    data =
+                        [
+                            ...response.data
+                                .attendanceHistory
+                        ];
+
+                } else if (
+                    Array.isArray(
+                        response.data?.attendance
+                    )
+                ) {
+
+                    data =
+                        [
+                            ...response.data
+                                .attendance
+                        ];
+
+                }
+
+                data.sort(
+                    (a, b) => {
+
+                        const dateA =
+                            getDateKey(
+                                getAttendanceDate(a)
+                            ) || "";
+
+                        const dateB =
+                            getDateKey(
+                                getAttendanceDate(b)
+                            ) || "";
+
+                        return dateB.localeCompare(
+                            dateA
+                        );
+
+                    }
+                );
+
+                setFacultyAttendance(
+                    data
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Faculty attendance loading error:",
+                    error
+                );
+
+                if (
+                    error.response?.status ===
+                    403
+                ) {
+
+                    setAttendanceError(
+                        "You are not authorized to view faculty attendance."
+                    );
+
+                } else if (
+                    error.response?.status ===
+                    404
+                ) {
+
+                    setAttendanceError(
+                        "Faculty attendance history was not found."
+                    );
+
+                } else {
+
+                    setAttendanceError(
+                        error.response?.data?.message ||
+                        "Unable to load faculty attendance history."
+                    );
+
+                }
+
+            } finally {
+
+                setLoadingAttendance(false);
+
+            }
+
+        };
+
+
+    // =========================================================
+    // OPEN FACULTY DETAILS
+    // =========================================================
+
+    const handleFacultyView =
+        async (faculty) => {
+
+            setSelectedFaculty(
+                faculty
+            );
+
+            setShowAllHistory(
+                false
+            );
+
+            setFacultyAttendance(
+                []
+            );
+
+            setAttendanceError("");
+
+            await loadFacultyAttendance(
+                faculty.id
+            );
+
+        };
+
+
+    // =========================================================
+    // CLOSE FACULTY DETAILS
+    // =========================================================
+
+    const closeFacultyDetails =
+        () => {
+
+            setSelectedFaculty(
+                null
+            );
+
+            setShowAllHistory(
+                false
+            );
+
+            setFacultyAttendance(
+                []
+            );
+
+            setAttendanceError("");
+
+        };
+
+
+    // =========================================================
+    // BUILD CURRENT MONTH CALENDAR
     // =========================================================
 
     const calendarDays = [];
-
 
     for (
         let i = 0;
@@ -989,10 +1072,11 @@ function AdminDashboard() {
         i++
     ) {
 
-        calendarDays.push(null);
+        calendarDays.push(
+            null
+        );
 
     }
-
 
     for (
         let day = 1;
@@ -1001,12 +1085,11 @@ function AdminDashboard() {
     ) {
 
         const dateKey =
-            `${currentYear}-${String(
+            `${currentYear}-` +
+            `${String(
                 currentMonth + 1
-            ).padStart(2, "0")}-${String(
-                day
-            ).padStart(2, "0")}`;
-
+            ).padStart(2, "0")}-` +
+            `${String(day).padStart(2, "0")}`;
 
         const attendance =
             facultyAttendance.find(
@@ -1018,14 +1101,12 @@ function AdminDashboard() {
                     ) === dateKey
             );
 
-
         const dateObject =
             new Date(
                 currentYear,
                 currentMonth,
                 day
             );
-
 
         const todayObject =
             new Date(
@@ -1034,20 +1115,66 @@ function AdminDashboard() {
                 todayDate.getDate()
             );
 
-
         const isFuture =
             dateObject >
             todayObject;
 
+        const isSunday =
+            dateObject.getDay() ===
+            0;
 
         calendarDays.push({
             day,
             dateKey,
             attendance,
-            isFuture
+            isFuture,
+            isSunday
         });
 
     }
+
+
+    // =========================================================
+    // CURRENT MONTH PRESENT COUNT
+    // =========================================================
+
+    const currentMonthPresentCount =
+        calendarDays.filter(
+            calendarDay =>
+                calendarDay &&
+                !calendarDay.isSunday &&
+                isAttendancePresent(
+                    calendarDay.attendance
+                )
+        ).length;
+
+
+    // =========================================================
+    // CURRENT MONTH ABSENT COUNT
+    // =========================================================
+
+    const currentMonthAbsentCount =
+        calendarDays.filter(
+            calendarDay =>
+                calendarDay &&
+                !calendarDay.isSunday &&
+                !calendarDay.isFuture &&
+                !isAttendancePresent(
+                    calendarDay.attendance
+                )
+        ).length;
+
+
+    // =========================================================
+    // SUNDAY COUNT
+    // =========================================================
+
+    const sundayCount =
+        calendarDays.filter(
+            calendarDay =>
+                calendarDay &&
+                calendarDay.isSunday
+        ).length;
 
 
     // =========================================================
@@ -1055,7 +1182,6 @@ function AdminDashboard() {
     // =========================================================
 
     const monthlyHistory = {};
-
 
     facultyAttendance.forEach(
         record => {
@@ -1067,22 +1193,17 @@ function AdminDashboard() {
                     )
                 );
 
-
             if (!dateKey) {
                 return;
             }
 
-
             const [
                 year,
                 month
-            ] =
-                dateKey.split("-");
-
+            ] = dateKey.split("-");
 
             const monthKey =
                 `${year}-${month}`;
-
 
             if (
                 !monthlyHistory[
@@ -1106,14 +1227,19 @@ function AdminDashboard() {
 
             }
 
-
             monthlyHistory[
                 monthKey
-            ].records.push(record);
+            ].records.push(
+                record
+            );
 
         }
     );
 
+
+    // =========================================================
+    // SORT MONTHS
+    // =========================================================
 
     const sortedMonthlyHistory =
         Object.values(
@@ -1133,7 +1259,6 @@ function AdminDashboard() {
 
                 }
 
-
                 return (
                     b.month -
                     a.month
@@ -1147,97 +1272,78 @@ function AdminDashboard() {
     // MONTH NAME
     // =========================================================
 
-    const getMonthName = (
-        year,
-        month
-    ) => {
+    const getMonthName =
+        (year, month) => {
 
-        return new Date(
-            year,
-            month - 1,
-            1
-        ).toLocaleDateString(
-            "en-IN",
-            {
-                month: "long",
-                year: "numeric"
-            }
-        );
+            return new Date(
+                year,
+                month - 1,
+                1
+            ).toLocaleDateString(
+                "en-IN",
+                {
+                    month:
+                        "long",
+                    year:
+                        "numeric"
+                }
+            );
 
-    };
+        };
 
 
     // =========================================================
     // MONTH PRESENT COUNT
     // =========================================================
 
-    const getPresentCount = (
-        records
-    ) => {
+    const getPresentCount =
+        (records) => {
 
-        return records.filter(
-            record =>
-                isAttendancePresent(
-                    record
-                )
-        ).length;
-
-    };
-
-
-    // =========================================================
-    // CURRENT MONTH PRESENT COUNT
-    // =========================================================
-
-    const currentMonthPresentCount =
-        facultyAttendance.filter(
-            record => {
-
-                const dateKey =
-                    getDateKey(
-                        getAttendanceDate(
-                            record
-                        )
-                    );
-
-
-                if (!dateKey) {
-                    return false;
-                }
-
-
-                const expectedPrefix =
-                    `${currentYear}-${String(
-                        currentMonth + 1
-                    ).padStart(2, "0")}`;
-
-
-                return (
-                    dateKey.startsWith(
-                        expectedPrefix
-                    ) &&
+            return records.filter(
+                record =>
                     isAttendancePresent(
                         record
                     )
-                );
+            ).length;
 
-            }
-        ).length;
+        };
 
 
     // =========================================================
-    // CURRENT MONTH ABSENT COUNT
+    // MONTH ABSENT COUNT
     // =========================================================
 
-    const currentMonthAbsentCount =
-        calendarDays.filter(
-            day =>
-                day &&
-                !day.isFuture &&
-                !isAttendancePresent(
-                    day.attendance
-                )
-        ).length;
+    const getAbsentCount =
+        (records) => {
+
+            return records.filter(
+                record => {
+
+                    const dateKey =
+                        getDateKey(
+                            getAttendanceDate(
+                                record
+                            )
+                        );
+
+                    if (
+                        isSundayDate(
+                            dateKey
+                        )
+                    ) {
+
+                        return false;
+
+                    }
+
+                    return !isAttendancePresent(
+                        record
+                    );
+
+                }
+            ).length;
+
+        };
 
 
     // =========================================================
@@ -1279,10 +1385,14 @@ function AdminDashboard() {
                 </div>
 
 
+                {/* =================================================
+                    HEADER ACTIONS
+                ================================================= */}
+
                 <div className="admin-header-actions">
 
 
-                    {/* LEAVE REQUEST BUTTON */}
+                    {/* LEAVE REQUEST NOTIFICATION */}
 
                     <button
                         className="leave-alert-button"
@@ -1298,15 +1408,13 @@ function AdminDashboard() {
                             Leave Requests
                         </span>
 
-
-                        {leaveRequests.length > 0 && (
+                        {leaveRequests.length >
+                            0 && (
 
                             <span className="leave-alert-count">
-
                                 {
                                     leaveRequests.length
                                 }
-
                             </span>
 
                         )}
@@ -1411,9 +1519,6 @@ function AdminDashboard() {
 
             <section className="admin-statistics">
 
-
-                {/* TOTAL */}
-
                 <div className="admin-stat-card">
 
                     <div className="admin-stat-icon faculty-stat-icon">
@@ -1434,8 +1539,6 @@ function AdminDashboard() {
 
                 </div>
 
-
-                {/* ACTIVE */}
 
                 <div className="admin-stat-card">
 
@@ -1458,8 +1561,6 @@ function AdminDashboard() {
                 </div>
 
 
-                {/* DISABLED */}
-
                 <div className="admin-stat-card">
 
                     <div className="admin-stat-icon disabled-stat-icon">
@@ -1480,8 +1581,6 @@ function AdminDashboard() {
 
                 </div>
 
-
-                {/* PRESENT */}
 
                 <div className="admin-stat-card">
 
@@ -1511,7 +1610,6 @@ function AdminDashboard() {
             ================================================= */}
 
             <section className="admin-faculty-section">
-
 
                 <div className="faculty-section-header">
 
@@ -1554,10 +1652,10 @@ function AdminDashboard() {
 
                 <div className="department-filter">
 
-
                     <button
                         className={
-                            selectedDepartment === "ALL"
+                            selectedDepartment ===
+                            "ALL"
                                 ? "department-button active"
                                 : "department-button"
                         }
@@ -1645,9 +1743,7 @@ function AdminDashboard() {
 
                         <div className="faculty-error">
 
-                            {
-                                facultyError
-                            }
+                            {facultyError}
 
                         </div>
 
@@ -1658,7 +1754,8 @@ function AdminDashboard() {
 
                 {!loadingFaculty &&
                     !facultyError &&
-                    filteredFaculty.length > 0 && (
+                    filteredFaculty.length >
+                        0 && (
 
                         <div className="faculty-table-wrapper">
 
@@ -1668,7 +1765,9 @@ function AdminDashboard() {
 
                                     <tr>
 
-                                        <th>#</th>
+                                        <th>
+                                            #
+                                        </th>
 
                                         <th>
                                             Faculty
@@ -1716,7 +1815,6 @@ function AdminDashboard() {
                                                     faculty.clockIn
                                                 );
 
-
                                             return (
 
                                                 <tr
@@ -1727,7 +1825,8 @@ function AdminDashboard() {
 
                                                     <td>
                                                         {
-                                                            index + 1
+                                                            index +
+                                                            1
                                                         }
                                                     </td>
 
@@ -1870,7 +1969,8 @@ function AdminDashboard() {
 
                 {!loadingFaculty &&
                     !facultyError &&
-                    filteredFaculty.length === 0 && (
+                    filteredFaculty.length ===
+                        0 && (
 
                         <div className="faculty-empty">
 
@@ -1975,111 +2075,148 @@ function AdminDashboard() {
                         {!loadingLeaves &&
                             leaveError && (
 
-                                <div className="leave-error">
+                            <div className="leave-error">
 
-                                    {
-                                        leaveError
-                                    }
+                                {leaveError}
 
-                                </div>
+                            </div>
 
-                            )}
+                        )}
 
 
                         {/* EMPTY */}
 
                         {!loadingLeaves &&
                             !leaveError &&
-                            leaveRequests.length === 0 && (
+                            leaveRequests.length ===
+                                0 && (
 
-                                <div className="no-leave-requests">
+                            <div className="no-leave-requests">
 
-                                    <FaCheck />
+                                <FaCheck />
 
-                                    <h3>
-                                        No Pending Leave Requests
-                                    </h3>
+                                <h3>
+                                    No Pending Leave Requests
+                                </h3>
 
-                                    <p>
-                                        There are no leave
-                                        requests waiting
-                                        for approval.
-                                    </p>
+                                <p>
+                                    There are no leave
+                                    requests waiting
+                                    for approval.
+                                </p>
 
-                                </div>
+                            </div>
 
-                            )}
+                        )}
 
 
                         {/* REQUEST LIST */}
 
                         {!loadingLeaves &&
                             !leaveError &&
-                            leaveRequests.length > 0 && (
+                            leaveRequests.length >
+                                0 && (
 
-                                <div className="leave-request-list">
+                            <div className="leave-request-list">
 
-                                    {leaveRequests.map(
-                                        request => {
+                                {leaveRequests.map(
+                                    request => {
 
-                                            const isProcessing =
-                                                processingLeaveId ===
-                                                request.id;
+                                        const isProcessing =
+                                            processingLeaveId ===
+                                            request.id;
+
+                                        return (
+
+                                            <div
+                                                className="leave-request-card"
+                                                key={
+                                                    request.id
+                                                }
+                                            >
 
 
-                                            return (
+                                                {/* FACULTY */}
 
-                                                <div
-                                                    className="leave-request-card"
-                                                    key={
-                                                        request.id
-                                                    }
-                                                >
+                                                <div className="leave-request-top">
 
+                                                    <div className="leave-user-avatar">
 
-                                                    {/* FACULTY */}
-
-                                                    <div className="leave-request-top">
-
-                                                        <div className="leave-user-avatar">
-
-                                                            {
-                                                                request.facultyName
-                                                                    ?.charAt(
-                                                                        0
-                                                                    )
-                                                                    ?.toUpperCase() ||
+                                                        {
+                                                            (
+                                                                request.fullName ||
+                                                                request.facultyName ||
+                                                                request.facultyFullName ||
+                                                                request.user?.fullName ||
+                                                                request.userName ||
+                                                                request.name ||
                                                                 "F"
+                                                            )
+                                                                .charAt(0)
+                                                                .toUpperCase()
+                                                        }
+
+                                                    </div>
+
+
+                                                    <div>
+
+                                                        <h3>
+                                                            {
+                                                                request.fullName ||
+                                                                request.facultyName ||
+                                                                request.facultyFullName ||
+                                                                request.user?.fullName ||
+                                                                request.userName ||
+                                                                request.name ||
+                                                                "Faculty"
                                                             }
+                                                        </h3>
 
-                                                        </div>
+                                                        <p>
+                                                            {
+                                                                request.departmentName ||
+                                                                request.departmentCode ||
+                                                                "Department not assigned"
+                                                            }
+                                                        </p>
 
-
-                                                        <div>
-
-                                                            <h3>
-                                                                {
-                                                                    request.facultyName ||
-                                                                    "Faculty"
-                                                                }
-                                                            </h3>
-
-                                                            <p>
-                                                                {
-                                                                    request.departmentName ||
-                                                                    request.departmentCode ||
-                                                                    "Department not assigned"
-                                                                }
-                                                            </p>
-
-                                                        </div>
+                                                    </div>
 
 
-                                                        <span className="pending-badge">
+                                                    <span className="pending-badge">
+
+                                                        {
+                                                            request.status ||
+                                                            "PENDING"
+                                                        }
+
+                                                    </span>
+
+                                                </div>
+
+
+                                                {/* REQUEST DETAILS */}
+
+                                                <div className="leave-request-details">
+
+
+                                                    {/* FROM */}
+
+                                                    <div>
+
+                                                        <FaCalendarDay />
+
+                                                        <span>
+
+                                                            <strong>
+                                                                From Date
+                                                            </strong>
 
                                                             {
-                                                                request.status ||
-                                                                "PENDING"
+                                                                formatDate(
+                                                                    request.fromDate
+                                                                )
                                                             }
 
                                                         </span>
@@ -2087,170 +2224,147 @@ function AdminDashboard() {
                                                     </div>
 
 
-                                                    {/* DETAILS */}
+                                                    {/* TO */}
 
-                                                    <div className="leave-request-details">
+                                                    <div>
 
+                                                        <FaCalendarDay />
 
-                                                        <div>
+                                                        <span>
 
-                                                            <FaCalendarDay />
+                                                            <strong>
+                                                                To Date
+                                                            </strong>
 
-                                                            <span>
-
-                                                                <strong>
-                                                                    From Date
-                                                                </strong>
-
-                                                                {
-                                                                    formatDate(
-                                                                        request.fromDate
-                                                                    )
-                                                                }
-
-                                                            </span>
-
-                                                        </div>
-
-
-                                                        <div>
-
-                                                            <FaCalendarDay />
-
-                                                            <span>
-
-                                                                <strong>
-                                                                    To Date
-                                                                </strong>
-
-                                                                {
-                                                                    formatDate(
-                                                                        request.toDate
-                                                                    )
-                                                                }
-
-                                                            </span>
-
-                                                        </div>
-
-
-                                                        <div>
-
-                                                            <FaBuilding />
-
-                                                            <span>
-
-                                                                <strong>
-                                                                    Department
-                                                                </strong>
-
-                                                                {
-                                                                    request.departmentCode ||
-                                                                    request.departmentName ||
-                                                                    "--"
-                                                                }
-
-                                                            </span>
-
-                                                        </div>
-
-                                                    </div>
-
-
-                                                    {/* REASON */}
-
-                                                    <div className="leave-reason">
-
-                                                        <strong>
-                                                            Reason
-                                                        </strong>
-
-                                                        <p>
                                                             {
-                                                                request.reason ||
-                                                                "No reason provided."
+                                                                formatDate(
+                                                                    request.toDate
+                                                                )
                                                             }
-                                                        </p>
+
+                                                        </span>
 
                                                     </div>
 
 
-                                                    {/* ACTIONS */}
+                                                    {/* DEPARTMENT */}
 
-                                                    <div className="leave-actions">
+                                                    <div>
 
+                                                        <FaBuilding />
 
-                                                        {/* APPROVE */}
+                                                        <span>
 
-                                                        <button
-                                                            className="approve-leave-button"
-                                                            disabled={
-                                                                isProcessing
+                                                            <strong>
+                                                                Department
+                                                            </strong>
+
+                                                            {
+                                                                request.departmentCode ||
+                                                                "--"
                                                             }
-                                                            onClick={() =>
-                                                                handleLeaveAction(
-                                                                    request.id,
-                                                                    "APPROVED"
-                                                                )
-                                                            }
-                                                        >
 
-                                                            {isProcessing ? (
-
-                                                                <FaSpinner className="loading-spinner" />
-
-                                                            ) : (
-
-                                                                <FaCheck />
-
-                                                            )}
-
-                                                            Approve
-
-                                                        </button>
-
-
-                                                        {/* REJECT */}
-
-                                                        <button
-                                                            className="reject-leave-button"
-                                                            disabled={
-                                                                isProcessing
-                                                            }
-                                                            onClick={() =>
-                                                                handleLeaveAction(
-                                                                    request.id,
-                                                                    "REJECTED"
-                                                                )
-                                                            }
-                                                        >
-
-                                                            {isProcessing ? (
-
-                                                                <FaSpinner className="loading-spinner" />
-
-                                                            ) : (
-
-                                                                <FaTimes />
-
-                                                            )}
-
-                                                            Reject
-
-                                                        </button>
+                                                        </span>
 
                                                     </div>
 
                                                 </div>
 
-                                            );
 
-                                        }
-                                    )}
+                                                {/* REASON */}
 
-                                </div>
+                                                <div className="leave-reason">
 
-                            )}
+                                                    <strong>
+                                                        Reason
+                                                    </strong>
+
+                                                    <p>
+                                                        {
+                                                            request.reason ||
+                                                            "No reason provided."
+                                                        }
+                                                    </p>
+
+                                                </div>
+
+
+                                                {/* APPROVE / REJECT */}
+
+                                                <div className="leave-actions">
+
+
+                                                    {/* APPROVE */}
+
+                                                    <button
+                                                        className="approve-leave-button"
+                                                        disabled={
+                                                            isProcessing
+                                                        }
+                                                        onClick={() =>
+                                                            handleLeaveAction(
+                                                                request.id,
+                                                                "APPROVED"
+                                                            )
+                                                        }
+                                                    >
+
+                                                        {
+                                                            isProcessing
+                                                                ? (
+                                                                    <FaSpinner className="loading-spinner" />
+                                                                )
+                                                                : (
+                                                                    <FaCheck />
+                                                                )
+                                                        }
+
+                                                        Approve
+
+                                                    </button>
+
+
+                                                    {/* REJECT */}
+
+                                                    <button
+                                                        className="reject-leave-button"
+                                                        disabled={
+                                                            isProcessing
+                                                        }
+                                                        onClick={() =>
+                                                            handleLeaveAction(
+                                                                request.id,
+                                                                "REJECTED"
+                                                            )
+                                                        }
+                                                    >
+
+                                                        {
+                                                            isProcessing
+                                                                ? (
+                                                                    <FaSpinner className="loading-spinner" />
+                                                                )
+                                                                : (
+                                                                    <FaTimes />
+                                                                )
+                                                        }
+
+                                                        Reject
+
+                                                    </button>
+
+                                                </div>
+
+                                            </div>
+
+                                        );
+
+                                    }
+                                )}
+
+                            </div>
+
+                        )}
 
                     </div>
 
@@ -2260,24 +2374,16 @@ function AdminDashboard() {
 
 
             {/* =================================================
-                FACULTY ATTENDANCE DETAILS MODAL
+                FACULTY ATTENDANCE DETAILS
             ================================================= */}
 
             {selectedFaculty && (
 
                 <div
                     className="faculty-overlay"
-                    onClick={() => {
-
-                        setSelectedFaculty(
-                            null
-                        );
-
-                        setShowAllHistory(
-                            false
-                        );
-
-                    }}
+                    onClick={
+                        closeFacultyDetails
+                    }
                 >
 
                     <div
@@ -2316,17 +2422,9 @@ function AdminDashboard() {
 
                             <button
                                 className="close-details-button"
-                                onClick={() => {
-
-                                    setSelectedFaculty(
-                                        null
-                                    );
-
-                                    setShowAllHistory(
-                                        false
-                                    );
-
-                                }}
+                                onClick={
+                                    closeFacultyDetails
+                                }
                             >
 
                                 <FaTimes />
@@ -2404,596 +2502,752 @@ function AdminDashboard() {
                         {!loadingAttendance &&
                             attendanceError && (
 
-                                <div className="attendance-error">
+                            <div className="attendance-error">
 
-                                    {
-                                        attendanceError
-                                    }
+                                {attendanceError}
 
-                                </div>
+                            </div>
 
-                            )}
+                        )}
 
 
-                        {/* CURRENT MONTH */}
+                        {/* =================================================
+                            CURRENT MONTH
+                        ================================================= */}
 
                         {!loadingAttendance &&
                             !attendanceError &&
                             !showAllHistory && (
 
-                                <div className="current-month-attendance">
+                            <div className="current-month-attendance">
 
 
-                                    <div className="calendar-heading">
+                                <div className="calendar-heading">
 
-                                        <div>
+                                    <div>
 
-                                            <div className="calendar-title">
+                                        <div className="calendar-title">
 
-                                                <FaCalendarAlt />
+                                            <FaCalendarAlt />
 
-                                                <h3>
-                                                    Current Month Attendance
-                                                </h3>
-
-                                            </div>
-
-                                            <p>
-                                                {
-                                                    currentMonthName
-                                                }
-                                            </p>
+                                            <h3>
+                                                Current Month Attendance
+                                            </h3>
 
                                         </div>
 
-
-                                        <div className="calendar-legend">
-
-                                            <span>
-
-                                                <i className="legend-dot present-dot"></i>
-
-                                                Present
-
-                                            </span>
-
-
-                                            <span>
-
-                                                <i className="legend-dot absent-dot"></i>
-
-                                                Absent
-
-                                            </span>
-
-
-                                            <span>
-
-                                                <i className="legend-dot future-dot"></i>
-
-                                                Not Marked
-
-                                            </span>
-
-                                        </div>
+                                        <p>
+                                            {
+                                                currentMonthName
+                                            }
+                                        </p>
 
                                     </div>
 
 
-                                    {/* CALENDAR */}
+                                    <div className="calendar-legend">
 
-                                    <div className="attendance-calendar">
+                                        <span>
 
-                                        <div className="calendar-weekdays">
+                                            <i className="legend-dot present-dot"></i>
 
-                                            <span>Sun</span>
+                                            Present
 
-                                            <span>Mon</span>
-
-                                            <span>Tue</span>
-
-                                            <span>Wed</span>
-
-                                            <span>Thu</span>
-
-                                            <span>Fri</span>
-
-                                            <span>Sat</span>
-
-                                        </div>
+                                        </span>
 
 
-                                        <div className="calendar-grid">
+                                        <span>
 
-                                            {calendarDays.map(
-                                                (
-                                                    calendarDay,
-                                                    index
-                                                ) => {
+                                            <i className="legend-dot absent-dot"></i>
 
-                                                    if (
-                                                        !calendarDay
-                                                    ) {
+                                            Absent
 
-                                                        return (
-
-                                                            <div
-                                                                className="calendar-empty"
-                                                                key={
-                                                                    `empty-${index}`
-                                                                }
-                                                            />
-
-                                                        );
-
-                                                    }
+                                        </span>
 
 
-                                                    const isPresent =
-                                                        isAttendancePresent(
-                                                            calendarDay.attendance
-                                                        );
+                                        <span>
+
+                                            <i className="legend-dot holiday-dot"></i>
+
+                                            Sunday Holiday
+
+                                        </span>
 
 
-                                                    const isToday =
-                                                        calendarDay.dateKey ===
-                                                        todayKey;
+                                        <span>
+
+                                            <i className="legend-dot future-dot"></i>
+
+                                            Not Marked
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
 
 
-                                                    let dayClass =
-                                                        "calendar-day";
+                                {/* CALENDAR */}
+
+                                <div className="attendance-calendar">
+
+                                    <div className="calendar-weekdays">
+
+                                        <span className="sunday-heading">
+                                            Sun
+                                        </span>
+
+                                        <span>
+                                            Mon
+                                        </span>
+
+                                        <span>
+                                            Tue
+                                        </span>
+
+                                        <span>
+                                            Wed
+                                        </span>
+
+                                        <span>
+                                            Thu
+                                        </span>
+
+                                        <span>
+                                            Fri
+                                        </span>
+
+                                        <span>
+                                            Sat
+                                        </span>
+
+                                    </div>
 
 
-                                                    if (
-                                                        calendarDay.isFuture
-                                                    ) {
+                                    <div className="calendar-grid">
 
-                                                        dayClass +=
-                                                            " future";
+                                        {calendarDays.map(
+                                            (
+                                                calendarDay,
+                                                index
+                                            ) => {
 
-                                                    } else if (
-                                                        isPresent
-                                                    ) {
-
-                                                        dayClass +=
-                                                            " present";
-
-                                                    } else {
-
-                                                        dayClass +=
-                                                            " absent";
-
-                                                    }
-
-
-                                                    if (
-                                                        isToday
-                                                    ) {
-
-                                                        dayClass +=
-                                                            " today";
-
-                                                    }
-
+                                                if (!calendarDay) {
 
                                                     return (
 
                                                         <div
-                                                            className={
-                                                                dayClass
-                                                            }
+                                                            className="calendar-empty"
                                                             key={
-                                                                calendarDay.dateKey
+                                                                `empty-${index}`
                                                             }
-                                                        >
-
-                                                            <span className="calendar-day-number">
-
-                                                                {
-                                                                    calendarDay.day
-                                                                }
-
-                                                            </span>
-
-
-                                                            {!calendarDay.isFuture && (
-
-                                                                <span className="calendar-day-status">
-
-                                                                    {
-                                                                        isPresent
-                                                                            ? "P"
-                                                                            : "A"
-                                                                    }
-
-                                                                </span>
-
-                                                            )}
-
-
-                                                            {isToday && (
-
-                                                                <span className="today-label">
-                                                                    TODAY
-                                                                </span>
-
-                                                            )}
-
-                                                        </div>
+                                                        />
 
                                                     );
 
                                                 }
-                                            )}
 
-                                        </div>
+                                                const isPresent =
+                                                    isAttendancePresent(
+                                                        calendarDay.attendance
+                                                    );
+
+                                                const isToday =
+                                                    calendarDay.dateKey ===
+                                                    todayKey;
+
+                                                let dayClass =
+                                                    "calendar-day";
+
+                                                if (
+                                                    calendarDay.isSunday
+                                                ) {
+
+                                                    dayClass +=
+                                                        " holiday";
+
+                                                } else if (
+                                                    calendarDay.isFuture
+                                                ) {
+
+                                                    dayClass +=
+                                                        " future";
+
+                                                } else if (
+                                                    isPresent
+                                                ) {
+
+                                                    dayClass +=
+                                                        " present";
+
+                                                } else {
+
+                                                    dayClass +=
+                                                        " absent";
+
+                                                }
+
+                                                if (isToday) {
+
+                                                    dayClass +=
+                                                        " today";
+
+                                                }
+
+                                                return (
+
+                                                    <div
+                                                        className={
+                                                            dayClass
+                                                        }
+                                                        key={
+                                                            calendarDay.dateKey
+                                                        }
+                                                    >
+
+                                                        <span className="calendar-day-number">
+
+                                                            {
+                                                                calendarDay.day
+                                                            }
+
+                                                        </span>
+
+
+                                                        {
+                                                            calendarDay.isSunday
+                                                                ? (
+
+                                                                    <span className="calendar-day-status holiday-status">
+                                                                        H
+                                                                    </span>
+
+                                                                )
+                                                                : !calendarDay.isFuture
+                                                                    ? (
+
+                                                                        <span className="calendar-day-status">
+
+                                                                            {
+                                                                                isPresent
+                                                                                    ? "P"
+                                                                                    : "A"
+                                                                            }
+
+                                                                        </span>
+
+                                                                    )
+                                                                    : null
+                                                        }
+
+
+                                                        {isToday && (
+
+                                                            <span className="today-label">
+                                                                TODAY
+                                                            </span>
+
+                                                        )}
+
+                                                    </div>
+
+                                                );
+
+                                            }
+                                        )}
 
                                     </div>
-
-
-                                    {/* SUMMARY */}
-
-                                    <div className="calendar-summary">
-
-                                        <div className="summary-box present-summary">
-
-                                            <span>
-                                                Present
-                                            </span>
-
-                                            <strong>
-                                                {
-                                                    currentMonthPresentCount
-                                                }
-                                            </strong>
-
-                                        </div>
-
-
-                                        <div className="summary-box absent-summary">
-
-                                            <span>
-                                                Absent
-                                            </span>
-
-                                            <strong>
-                                                {
-                                                    currentMonthAbsentCount
-                                                }
-                                            </strong>
-
-                                        </div>
-
-                                    </div>
-
-
-                                    {/* VIEW HISTORY */}
-
-                                    <button
-                                        className="view-all-history-button"
-                                        onClick={() =>
-                                            setShowAllHistory(
-                                                true
-                                            )
-                                        }
-                                    >
-
-                                        <FaHistory />
-
-                                        View Attendance History
-
-                                        <FaArrowRight />
-
-                                    </button>
 
                                 </div>
 
-                            )}
+
+                                {/* SUMMARY */}
+
+                                <div className="calendar-summary">
+
+                                    <div className="summary-box present-summary">
+
+                                        <span>
+                                            Present
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                currentMonthPresentCount
+                                            }
+                                        </strong>
+
+                                    </div>
 
 
-                        {/* ATTENDANCE HISTORY */}
+                                    <div className="summary-box absent-summary">
+
+                                        <span>
+                                            Absent
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                currentMonthAbsentCount
+                                            }
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div className="summary-box holiday-summary">
+
+                                        <span>
+                                            Sunday Holidays
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                sundayCount
+                                            }
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* VIEW ALL */}
+
+                                <button
+                                    className="view-all-history-button"
+                                    onClick={() =>
+                                        setShowAllHistory(
+                                            true
+                                        )
+                                    }
+                                >
+
+                                    <FaHistory />
+
+                                    View All Attendance History
+
+                                    <FaArrowRight />
+
+                                </button>
+
+                            </div>
+
+                        )}
+
+
+                        {/* =================================================
+                            COMPLETE HISTORY
+                        ================================================= */}
 
                         {!loadingAttendance &&
                             !attendanceError &&
                             showAllHistory && (
 
-                                <div className="all-history-section">
+                            <div className="all-history-section">
 
 
-                                    <div className="history-heading">
+                                <div className="history-heading">
 
-                                        <div>
+                                    <div>
 
-                                            <div className="calendar-title">
+                                        <div className="calendar-title">
 
-                                                <FaHistory />
+                                            <FaHistory />
 
-                                                <h3>
-                                                    Attendance History
-                                                </h3>
-
-                                            </div>
-
-                                            <p>
-                                                Attendance records loaded for the selected period
-                                            </p>
+                                            <h3>
+                                                Complete Attendance History
+                                            </h3>
 
                                         </div>
 
-
-                                        <button
-                                            className="back-calendar-button"
-                                            onClick={() =>
-                                                setShowAllHistory(
-                                                    false
-                                                )
-                                            }
-                                        >
-
-                                            <FaArrowLeft />
-
-                                            Current Month
-
-                                        </button>
+                                        <p>
+                                            Attendance history across all years and months
+                                        </p>
 
                                     </div>
 
 
-                                    {sortedMonthlyHistory.length === 0 && (
+                                    <button
+                                        className="back-calendar-button"
+                                        onClick={() =>
+                                            setShowAllHistory(
+                                                false
+                                            )
+                                        }
+                                    >
 
-                                        <div className="no-history">
+                                        <FaArrowLeft />
 
-                                            <FaCalendarAlt />
+                                        Current Month
 
-                                            <h3>
-                                                No Attendance History
-                                            </h3>
+                                    </button>
 
-                                            <p>
-                                                No attendance records are
-                                                available for this faculty.
-                                            </p>
-
-                                        </div>
-
-                                    )}
+                                </div>
 
 
-                                    {sortedMonthlyHistory.length > 0 && (
+                                {sortedMonthlyHistory.length ===
+                                    0 && (
 
-                                        <div className="monthly-history-list">
+                                    <div className="no-history">
 
-                                            {sortedMonthlyHistory.map(
-                                                history => {
+                                        <FaCalendarAlt />
 
-                                                    const presentCount =
-                                                        getPresentCount(
-                                                            history.records
-                                                        );
+                                        <h3>
+                                            No Attendance History
+                                        </h3>
 
+                                        <p>
+                                            No attendance records are
+                                            available for this faculty.
+                                        </p>
 
-                                                    const absentCount =
-                                                        history.records.filter(
-                                                            record =>
-                                                                !isAttendancePresent(
-                                                                    record
-                                                                )
-                                                        ).length;
+                                    </div>
+
+                                )}
 
 
-                                                    const sortedRecords =
-                                                        [
-                                                            ...history.records
-                                                        ].sort(
-                                                            (
-                                                                a,
-                                                                b
-                                                            ) =>
-                                                                String(
+                                {sortedMonthlyHistory.length >
+                                    0 && (
+
+                                    <div className="monthly-history-list">
+
+                                        {sortedMonthlyHistory.map(
+                                            history => {
+
+                                                const presentCount =
+                                                    getPresentCount(
+                                                        history.records
+                                                    );
+
+                                                const absentCount =
+                                                    getAbsentCount(
+                                                        history.records
+                                                    );
+
+                                                const sortedRecords =
+                                                    [
+                                                        ...history.records
+                                                    ].sort(
+                                                        (a, b) => {
+
+                                                            const dateA =
+                                                                getDateKey(
                                                                     getAttendanceDate(
                                                                         a
-                                                                    ) ||
-                                                                    ""
-                                                                ).localeCompare(
-                                                                    String(
-                                                                        getAttendanceDate(
-                                                                            b
-                                                                        ) ||
-                                                                        ""
                                                                     )
-                                                                )
-                                                        );
+                                                                ) || "";
 
+                                                            const dateB =
+                                                                getDateKey(
+                                                                    getAttendanceDate(
+                                                                        b
+                                                                    )
+                                                                ) || "";
 
-                                                    return (
+                                                            return dateA.localeCompare(
+                                                                dateB
+                                                            );
 
-                                                        <div
-                                                            className="monthly-history-card"
-                                                            key={
-                                                                `${history.year}-${history.month}`
-                                                            }
-                                                        >
+                                                        }
+                                                    );
 
+                                                return (
 
-                                                            {/* MONTH HEADER */}
+                                                    <div
+                                                        className="monthly-history-card"
+                                                        key={
+                                                            `${history.year}-${history.month}`
+                                                        }
+                                                    >
 
-                                                            <div className="monthly-history-header">
+                                                        <div className="monthly-history-header">
 
-                                                                <div className="month-icon">
+                                                            <div className="month-icon">
 
-                                                                    <FaCalendarAlt />
-
-                                                                </div>
-
-
-                                                                <div>
-
-                                                                    <h4>
-                                                                        {
-                                                                            getMonthName(
-                                                                                history.year,
-                                                                                history.month
-                                                                            )
-                                                                        }
-                                                                    </h4>
-
-                                                                    <span>
-
-                                                                        {
-                                                                            history.records.length
-                                                                        }
-
-                                                                        {" "}
-
-                                                                        attendance record
-
-                                                                        {
-                                                                            history.records.length !==
-                                                                            1
-                                                                                ? "s"
-                                                                                : ""
-                                                                        }
-
-                                                                    </span>
-
-                                                                </div>
+                                                                <FaCalendarAlt />
 
                                                             </div>
 
 
-                                                            {/* STATS */}
+                                                            <div>
 
-                                                            <div className="monthly-history-stats">
-
-
-                                                                <div className="history-stat present-history">
-
-                                                                    <span>
-                                                                        Present
-                                                                    </span>
-
-                                                                    <strong>
-                                                                        {
-                                                                            presentCount
-                                                                        }
-                                                                    </strong>
-
-                                                                </div>
-
-
-                                                                <div className="history-stat absent-history">
-
-                                                                    <span>
-                                                                        Absent
-                                                                    </span>
-
-                                                                    <strong>
-                                                                        {
-                                                                            absentCount
-                                                                        }
-                                                                    </strong>
-
-                                                                </div>
-
-                                                            </div>
-
-
-                                                            {/* RECORDS */}
-
-                                                            <div className="monthly-records">
-
-                                                                {sortedRecords.map(
-                                                                    (
-                                                                        record,
-                                                                        recordIndex
-                                                                    ) => {
-
-                                                                        const recordDate =
-                                                                            getDateKey(
-                                                                                getAttendanceDate(
-                                                                                    record
-                                                                                )
-                                                                            );
-
-
-                                                                        const present =
-                                                                            isAttendancePresent(
-                                                                                record
-                                                                            );
-
-
-                                                                        return (
-
-                                                                            <div
-                                                                                className={
-                                                                                    present
-                                                                                        ? "history-record present-record"
-                                                                                        : "history-record absent-record"
-                                                                                }
-                                                                                key={
-                                                                                    record.attendanceId ||
-                                                                                    record.id ||
-                                                                                    `${history.year}-${history.month}-${recordIndex}`
-                                                                                }
-                                                                            >
-
-                                                                                <span className="history-date">
-
-                                                                                    {
-                                                                                        recordDate ||
-                                                                                        "--"
-                                                                                    }
-
-                                                                                </span>
-
-
-                                                                                <span className="history-status">
-
-                                                                                    {
-                                                                                        present
-                                                                                            ? "PRESENT"
-                                                                                            : "ABSENT"
-                                                                                    }
-
-                                                                                </span>
-
-
-                                                                                <span className="history-clock">
-
-                                                                                    {
-                                                                                        present
-                                                                                            ? formatTime(
-                                                                                                record.clockIn ||
-                                                                                                record.clock_in
-                                                                                            )
-                                                                                            : "--"
-                                                                                    }
-
-                                                                                </span>
-
-                                                                            </div>
-
-                                                                        );
-
+                                                                <h4>
+                                                                    {
+                                                                        getMonthName(
+                                                                            history.year,
+                                                                            history.month
+                                                                        )
                                                                     }
-                                                                )}
+                                                                </h4>
+
+                                                                <span>
+
+                                                                    {
+                                                                        history.records.length
+                                                                    }
+
+                                                                    {" "}
+
+                                                                    attendance record
+
+                                                                    {
+                                                                        history.records.length !==
+                                                                            1
+                                                                            ? "s"
+                                                                            : ""
+                                                                    }
+
+                                                                </span>
 
                                                             </div>
 
                                                         </div>
 
-                                                    );
 
-                                                }
-                                            )}
+                                                        <div className="monthly-history-stats">
 
-                                        </div>
+                                                            <div className="history-stat present-history">
 
-                                    )}
+                                                                <span>
+                                                                    Present
+                                                                </span>
 
-                                </div>
+                                                                <strong>
+                                                                    {
+                                                                        presentCount
+                                                                    }
+                                                                </strong>
 
-                            )}
+                                                            </div>
+
+
+                                                            <div className="history-stat absent-history">
+
+                                                                <span>
+                                                                    Absent
+                                                                </span>
+
+                                                                <strong>
+                                                                    {
+                                                                        absentCount
+                                                                    }
+                                                                </strong>
+
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        <div className="history-record history-record-header">
+
+                                                            <span>
+                                                                Date
+                                                            </span>
+
+                                                            <span>
+                                                                Status
+                                                            </span>
+
+                                                            <span>
+                                                                Clock In
+                                                            </span>
+
+                                                            <span>
+                                                                Clock Out
+                                                            </span>
+
+                                                            <span>
+                                                                Work Duration
+                                                            </span>
+
+                                                        </div>
+
+
+                                                        <div className="monthly-records">
+
+                                                            {sortedRecords.map(
+                                                                (
+                                                                    record,
+                                                                    recordIndex
+                                                                ) => {
+
+                                                                    const recordDate =
+                                                                        getDateKey(
+                                                                            getAttendanceDate(
+                                                                                record
+                                                                            )
+                                                                        );
+
+                                                                    const present =
+                                                                        isAttendancePresent(
+                                                                            record
+                                                                        );
+
+                                                                    const clockIn =
+                                                                        getClockIn(
+                                                                            record
+                                                                        );
+
+                                                                    const clockOut =
+                                                                        getClockOut(
+                                                                            record
+                                                                        );
+
+                                                                    const workingMinutes =
+                                                                        getWorkingMinutes(
+                                                                            record
+                                                                        );
+
+                                                                    const sunday =
+                                                                        isSundayDate(
+                                                                            recordDate
+                                                                        );
+
+                                                                    const weekday =
+                                                                        recordDate
+                                                                            ? new Date(
+                                                                                `${recordDate}T00:00:00`
+                                                                            ).toLocaleDateString(
+                                                                                "en-IN",
+                                                                                {
+                                                                                    weekday:
+                                                                                        "long"
+                                                                                }
+                                                                            )
+                                                                            : "--";
+
+                                                                    return (
+
+                                                                        <div
+                                                                            className={
+                                                                                sunday
+                                                                                    ? "history-record holiday-record"
+                                                                                    : present
+                                                                                        ? "history-record present-record"
+                                                                                        : "history-record absent-record"
+                                                                            }
+                                                                            key={
+                                                                                record.attendanceId ||
+                                                                                record.id ||
+                                                                                `${history.year}-${history.month}-${recordIndex}`
+                                                                            }
+                                                                        >
+
+                                                                            <span className="history-date">
+
+                                                                                <strong>
+                                                                                    {
+                                                                                        recordDate ||
+                                                                                        "--"
+                                                                                    }
+                                                                                </strong>
+
+                                                                                <small>
+                                                                                    {
+                                                                                        weekday
+                                                                                    }
+                                                                                </small>
+
+                                                                            </span>
+
+
+                                                                            <span className="history-status">
+
+                                                                                {
+                                                                                    sunday
+                                                                                        ? "HOLIDAY"
+                                                                                        : present
+                                                                                            ? "PRESENT"
+                                                                                            : "ABSENT"
+                                                                                }
+
+                                                                            </span>
+
+
+                                                                            <span className="history-clock clock-in-time">
+
+                                                                                {clockIn ? (
+
+                                                                                    <>
+
+                                                                                        <FaClock />
+
+                                                                                        {
+                                                                                            formatTime(
+                                                                                                clockIn
+                                                                                            )
+                                                                                        }
+
+                                                                                    </>
+
+                                                                                ) : (
+
+                                                                                    "--"
+
+                                                                                )}
+
+                                                                            </span>
+
+
+                                                                            <span className="history-clock clock-out-time">
+
+                                                                                {clockOut ? (
+
+                                                                                    <>
+
+                                                                                        <FaClock />
+
+                                                                                        {
+                                                                                            formatTime(
+                                                                                                clockOut
+                                                                                            )
+                                                                                        }
+
+                                                                                    </>
+
+                                                                                ) : (
+
+                                                                                    "--"
+
+                                                                                )}
+
+                                                                            </span>
+
+
+                                                                            <span className="history-duration">
+
+                                                                                {
+                                                                                    formatWorkingDuration(
+                                                                                        workingMinutes
+                                                                                    )
+                                                                                }
+
+                                                                            </span>
+
+                                                                        </div>
+
+                                                                    );
+
+                                                                }
+                                                            )}
+
+                                                        </div>
+
+                                                    </div>
+
+                                                );
+
+                                            }
+                                        )}
+
+                                    </div>
+
+                                )}
+
+                            </div>
+
+                        )}
 
                     </div>
 
@@ -3009,3 +3263,4 @@ function AdminDashboard() {
 
 
 export default AdminDashboard;
+
